@@ -1,0 +1,2 @@
+If you're having font problems in gvim, see here: http://vim.wikia.com/wiki/The_perfect_programming_font
+  Solution is to cd to ~/.fonts and run fc-cache
