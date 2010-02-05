@@ -1,0 +1,7 @@
+[user]
+	name = Ben Hutton
+	email = benhutton@gmail.com
+[color]
+	diff = auto
+	status = auto
+	branch = auto
