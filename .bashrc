@@ -88,16 +88,18 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
-# some more ls aliases
-alias ll='ls -al'
-alias vi='vim'
-alias vig='vim -g'
-alias ..='cd ..'
-alias ...='cd ../..'
-alias c='cd ~/public_html/$1'
-
-alias sc='script/console'
-alias ss='script/server'
+#--------------------------------------------------
+# # some more ls aliases
+# alias ll='ls -al'
+# alias vi='vim'
+# alias vig='vim -g'
+# alias ..='cd ..'
+# alias ...='cd ../..'
+# alias c='cd ~/public_html/$1'
+# 
+# alias sc='script/console'
+# alias ss='script/server'
+#-------------------------------------------------- 
 
 #alias ncec2='ssh -i ~/dgrails.pem root@174.129.24.88'
 #alias ncec22='ssh -i ~/dgrails.pem root@ec2-75-101-223-19.compute-1.amazonaws.com'

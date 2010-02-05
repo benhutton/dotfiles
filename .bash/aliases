@@ -1,0 +1,10 @@
+# some more ls aliases
+alias ll='ls -al'
+alias vi='vim'
+alias vig='vim -g'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias c='cd ~/public_html/$1'
+
+alias sc='script/console'
+alias ss='script/server'
