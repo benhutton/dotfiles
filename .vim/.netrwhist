@@ -1,0 +1,4 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =2
+let g:netrw_dirhist_1='/home/ben/projects/dgnetwork/.bundle/ruby/1.9.1/bundler/gems/globalize3-a275f86e38e3'
+let g:netrw_dirhist_2='/home/ben/projects/dgnetwork/.bundle/ruby/1.9.1/gems/thinking-sphinx-2.0.1'

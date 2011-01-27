@@ -7,9 +7,9 @@
 
 # don't put duplicate lines in the history. See bash(1) for more options
 # don't overwrite GNU Midnight Commander's setting of `ignorespace'.
-export HISTCONTROL=$HISTCONTROL${HISTCONTROL+,}ignoredups
+HISTCONTROL=$HISTCONTROL${HISTCONTROL+,}ignoredups
 # ... or force ignoredups and ignorespace
-export HISTCONTROL=ignoreboth
+HISTCONTROL=ignoreboth
 
 # append to the history file, don't overwrite it
 shopt -s histappend
@@ -67,59 +67,51 @@ xterm*|rxvt*)
     ;;
 esac
 
-# Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
-
-#if [ -f ~/.bash_aliases ]; then
-#    . ~/.bash_aliases
-#fi
-
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
-    eval "`dircolors -b`"
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
     alias ls='ls --color=auto'
-    alias dir='dir --color=auto'
-    alias vdir='vdir --color=auto'
+    #alias dir='dir --color=auto'
+    #alias vdir='vdir --color=auto'
 
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
 fi
 
-#--------------------------------------------------
-# # some more ls aliases
-# alias ll='ls -al'
-# alias vi='vim'
-# alias vig='vim -g'
-# alias ..='cd ..'
-# alias ...='cd ../..'
-# alias c='cd ~/public_html/$1'
-# 
-# alias sc='script/console'
-# alias ss='script/server'
-#-------------------------------------------------- 
+alias dgn='cd ~/projects/dgnetwork; bundle exec bash'
 
-#alias ncec2='ssh -i ~/dgrails.pem root@174.129.24.88'
-#alias ncec22='ssh -i ~/dgrails.pem root@ec2-75-101-223-19.compute-1.amazonaws.com'
-#--------------------------------------------------
-# alias ncec2='ssh -i ~/dgrails.pem root@ec2-67-202-39-169.compute-1.amazonaws.com'
-#-------------------------------------------------- 
-alias ncec2='ssh -i ~/dgrails.pem root@ec2-174-129-24-88.compute-1.amazonaws.com'
+# some more ls aliases
+#alias ll='ls -l'
+#alias la='ls -A'
+#alias l='ls -CF'
 
-# additions to PATH
+# Alias definitions.
+# You may want to put all your additions into a separate file like
+# ~/.bash_aliases, instead of adding them here directly.
+# See /usr/share/doc/bash-doc/examples in the bash-doc package.
 
-#export PATH=/var/lib/gems/1.8.0/bin:$PATH
-export PATH=/usr/local/bin/ruby_bin:$PATH
-export USE_MEMCACHE_SESSION_STORE=true
+#export PATH=/usr/local/ruby-1.9.1-p378/bin:$PATH
+
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
-if [ -f /etc/bash_completion ]; then
+if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
+
+export EDITOR=vim
+export BUNDLER_EDITOR=gvim
+
+export AWS_RDS_HOME=/opt/RDSCli-1.3.003
+export JAVA_HOME=/usr/lib/jvm/java-6-openjdk
+export EC2_CERT=/home/ben/cert-UR64TIO7PPF4PXC36RPVYM5QWXFIJGOS.pem
+export EC2_PRIVATE_KEY=/home/ben/pk-UR64TIO7PPF4PXC36RPVYM5QWXFIJGOS.pem
+export PATH=${AWS_RDS_HOME}/bin:$PATH
 
 source ~/.bash/aliases
 source ~/.bash/completions
