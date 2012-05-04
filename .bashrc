@@ -3,7 +3,7 @@
 # for examples
 
 # If not running interactively, don't do anything
-[ -z "$PS1" ] && return
+if [[ -n "$PS1" ]] ; then
 
 # don't put duplicate lines in the history. See bash(1) for more options
 # don't overwrite GNU Midnight Commander's setting of `ignorespace'.
@@ -79,7 +79,7 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
-alias dgn='cd ~/projects/dgnetwork; bundle exec bash'
+alias dgn='cd ~/projects/desiringgod; bundle exec bash'
 
 # some more ls aliases
 #alias ll='ls -l'
@@ -116,3 +116,9 @@ export PATH=${AWS_RDS_HOME}/bin:$PATH
 source ~/.bash/aliases
 source ~/.bash/completions
 source ~/.bash/paths
+
+fi
+[[ -s "/home/ben/.rvm/scripts/rvm" ]] && source "/home/ben/.rvm/scripts/rvm"
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+
+PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
