@@ -5,8 +5,5 @@
 	diff = auto
 	status = auto
 	branch = auto
-[github]
-	user = benhutton
-	token = fc53359d72c4cef87f2f71598dc462f8
 [core]
 	excludesfile = /home/ben/.gitignore_global
