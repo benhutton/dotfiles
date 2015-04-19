@@ -5,7 +5,7 @@ call pathogen#runtime_append_all_bundles()
 autocmd!
 
 colorscheme herald
-set guifont=ProggyCleanTT\ 12
+set guifont=ProggyCleanTT\ 14
 
 syntax on
 filetype plugin indent on
