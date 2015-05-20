@@ -1,0 +1,10 @@
+# Filesystem
+alias ..='cd ..'            # Go up one directory
+alias ...='cd ../..'        # Go up two directories
+alias ....='cd ../../..'    # And for good measure
+alias ll='ls -laFh'          # Long view, no hidden
+
+# Helpers
+alias grep='grep --color=auto' # Always highlight grep search term
+alias df='df -h'            # Disk free, in gigabytes, not bytes
+alias du='du -h -c'         # Calculate total disk usage for a folder
