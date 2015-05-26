@@ -95,7 +95,7 @@ autoload promptinit
 fpath=($HOME/.prompts $fpath)
 promptinit
 
-zstyle ':prezto:module:prompt' theme 'ben'
+zstyle ':prezto:module:prompt' theme 'benagnoster'
 
 #
 # Ruby
