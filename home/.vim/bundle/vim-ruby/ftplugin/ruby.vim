@@ -2,7 +2,6 @@
 " Language:		Ruby
 " Maintainer:		Tim Pope <vimNOSPAM@tpope.org>
 " URL:			https://github.com/vim-ruby/vim-ruby
-" Anon CVS:		See above site
 " Release Coordinator:  Doug Kearns <dougkearns@gmail.com>
 " ----------------------------------------------------------------------------
 
@@ -15,7 +14,7 @@ let s:cpo_save = &cpo
 set cpo&vim
 
 if has("gui_running") && !has("gui_win32")
-  setlocal keywordprg=ri\ -T
+  setlocal keywordprg=ri\ -T\ -f\ bs
 else
   setlocal keywordprg=ri
 endif
@@ -29,12 +28,13 @@ if exists("loaded_matchit") && !exists("b:match_words")
 	\ ':' .
 	\ '\<\%(else\|elsif\|ensure\|when\|rescue\|break\|redo\|next\|retry\)\>' .
 	\ ':' .
-	\ '\<end\>' .
+        \ '\%(^\|[^.\:@$]\)\@<=\<end\:\@!\>' .
 	\ ',{:},\[:\],(:)'
 
   let b:match_skip =
 	\ "synIDattr(synID(line('.'),col('.'),0),'name') =~ '" .
 	\ "\\<ruby\\%(String\\|StringDelimiter\\|ASCIICode\\|Escape\\|" .
+        \ "Regexp\\|RegexpDelimiter\\|" .
 	\ "Interpolation\\|NoInterpolation\\|Comment\\|Documentation\\|" .
 	\ "ConditionalModifier\\|RepeatModifier\\|OptionalDo\\|" .
 	\ "Function\\|BlockArgument\\|KeywordAsMethod\\|ClassVariable\\|" .
@@ -63,39 +63,77 @@ endif
 setlocal comments=:#
 setlocal commentstring=#\ %s
 
-if !exists("s:ruby_path")
-  if exists("g:ruby_path")
-    let s:ruby_path = type(g:ruby_path) == type([]) ? join(g:ruby_path,',') : g:ruby_path
+if !exists('g:ruby_version_paths')
+  let g:ruby_version_paths = {}
+endif
+
+function! s:query_path(root)
+  let code = "print $:.join %q{,}"
+  if &shell =~# 'sh'
+    let prefix = 'env PATH='.shellescape($PATH).' '
   else
-    if has("ruby") && has("win32")
-      ruby ::VIM::command( 'let s:ruby_paths = split("%s",",")' % $:.join(%q{,}) )
-    elseif executable('ruby')
-      let s:code = "print $:.join(%q{,})"
-      if executable('env') && $PATH !~# '\s'
-        let prefix = 'env PATH='.$PATH.' '
-      else
-        let prefix = ''
-      endif
-      if &shellxquote == "'"
-        let s:ruby_paths = split(system(prefix.'ruby -e "' . s:code . '"'),',')
-      else
-        let s:ruby_paths = split(system(prefix."ruby -e '" . s:code . "'"),',')
-      endif
-    else
-      let s:ruby_paths = split($RUBYLIB,':')
-    endif
-    let s:ruby_path = substitute(join(s:ruby_paths,","), '\%(^\|,\)\.\%(,\|$\)', ',,', '')
-    if &g:path !~# '\v^\.%(,/%(usr|emx)/include)=,,$'
-      let s:ruby_path = substitute(&g:path,',,$',',','') . ',' . s:ruby_path
+    let prefix = ''
+  endif
+  if &shellxquote == "'"
+    let path_check = prefix.'ruby -e "' . code . '"'
+  else
+    let path_check = prefix."ruby -e '" . code . "'"
+  endif
+
+  let cd = haslocaldir() ? 'lcd' : 'cd'
+  let cwd = getcwd()
+  try
+    exe cd fnameescape(a:root)
+    let path = split(system(path_check),',')
+    exe cd fnameescape(cwd)
+    return path
+  finally
+    exe cd fnameescape(cwd)
+  endtry
+endfunction
+
+function! s:build_path(path)
+  let path = join(map(copy(a:path), 'v:val ==# "." ? "" : v:val'), ',')
+  if &g:path !~# '\v^\.%(,/%(usr|emx)/include)=,,$'
+    let path = substitute(&g:path,',,$',',','') . ',' . path
+  endif
+  return path
+endfunction
+
+if !exists('b:ruby_version') && !exists('g:ruby_path') && isdirectory(expand('%:p:h'))
+  let s:version_file = findfile('.ruby-version', '.;')
+  if !empty(s:version_file)
+    let b:ruby_version = get(readfile(s:version_file, '', 1), '')
+    if !has_key(g:ruby_version_paths, b:ruby_version)
+      let g:ruby_version_paths[b:ruby_version] = s:query_path(fnamemodify(s:version_file, ':p:h'))
     endif
   endif
+endif
+
+if exists("g:ruby_path")
+  let s:ruby_path = type(g:ruby_path) == type([]) ? join(g:ruby_path, ',') : g:ruby_path
+elseif has_key(g:ruby_version_paths, get(b:, 'ruby_version', ''))
+  let s:ruby_paths = g:ruby_version_paths[b:ruby_version]
+  let s:ruby_path = s:build_path(s:ruby_paths)
+else
+  if !exists('g:ruby_default_path')
+    if has("ruby") && has("win32")
+      ruby ::VIM::command( 'let g:ruby_default_path = split("%s",",")' % $:.join(%q{,}) )
+    elseif executable('ruby')
+      let g:ruby_default_path = s:query_path($HOME)
+    else
+      let g:ruby_default_path = map(split($RUBYLIB,':'), 'v:val ==# "." ? "" : v:val')
+    endif
+  endif
+  let s:ruby_paths = g:ruby_default_path
+  let s:ruby_path = s:build_path(s:ruby_paths)
 endif
 
 if stridx(&l:path, s:ruby_path) == -1
   let &l:path = s:ruby_path
 endif
 if exists('s:ruby_paths') && stridx(&l:tags, join(map(copy(s:ruby_paths),'v:val."/tags"'),',')) == -1
-  let &l:tags .= ',' . join(map(copy(s:ruby_paths),'v:val."/tags"'),',')
+  let &l:tags = &tags . ',' . join(map(copy(s:ruby_paths),'v:val."/tags"'),',')
 endif
 
 if has("gui_win32") && !exists("b:browsefilter")
@@ -130,32 +168,38 @@ if !exists("g:no_plugin_maps") && !exists("g:no_ruby_maps")
   let b:undo_ftplugin = b:undo_ftplugin
         \."| sil! exe 'unmap <buffer> [[' | sil! exe 'unmap <buffer> ]]' | sil! exe 'unmap <buffer> []' | sil! exe 'unmap <buffer> ]['"
         \."| sil! exe 'unmap <buffer> [m' | sil! exe 'unmap <buffer> ]m' | sil! exe 'unmap <buffer> [M' | sil! exe 'unmap <buffer> ]M'"
-        \."! sil! exe 'ounmap <buffer> im'| sil! exe 'ounmap <buffer> am'| sil! exe 'ounmap <buffer> ic'| sil! exe 'ounmap <buffer> ac'"
 
   if maparg('im','n') == ''
     onoremap <silent> <buffer> im :<C-U>call <SID>wrap_i('[m',']M')<CR>
     onoremap <silent> <buffer> am :<C-U>call <SID>wrap_a('[m',']M')<CR>
+    xnoremap <silent> <buffer> im :<C-U>call <SID>wrap_i('[m',']M')<CR>
+    xnoremap <silent> <buffer> am :<C-U>call <SID>wrap_a('[m',']M')<CR>
     let b:undo_ftplugin = b:undo_ftplugin
-          \."! sil! exe 'ounmap <buffer> im' | sil! exe 'ounmap <buffer> am'"
+          \."| sil! exe 'ounmap <buffer> im' | sil! exe 'ounmap <buffer> am'"
+          \."| sil! exe 'xunmap <buffer> im' | sil! exe 'xunmap <buffer> am'"
   endif
 
   if maparg('iM','n') == ''
     onoremap <silent> <buffer> iM :<C-U>call <SID>wrap_i('[[','][')<CR>
     onoremap <silent> <buffer> aM :<C-U>call <SID>wrap_a('[[','][')<CR>
+    xnoremap <silent> <buffer> iM :<C-U>call <SID>wrap_i('[[','][')<CR>
+    xnoremap <silent> <buffer> aM :<C-U>call <SID>wrap_a('[[','][')<CR>
     let b:undo_ftplugin = b:undo_ftplugin
           \."| sil! exe 'ounmap <buffer> iM' | sil! exe 'ounmap <buffer> aM'"
+          \."| sil! exe 'xunmap <buffer> iM' | sil! exe 'xunmap <buffer> aM'"
   endif
 
   if maparg("\<C-]>",'n') == ''
-    nnoremap <silent> <buffer> <C-]>       :<C-U>exe  v:count1."tag <C-R>=RubyCursorIdentifier()<CR>"<CR>
-    nnoremap <silent> <buffer> g<C-]>      :<C-U>exe         "tjump <C-R>=RubyCursorIdentifier()<CR>"<CR>
-    nnoremap <silent> <buffer> g]          :<C-U>exe       "tselect <C-R>=RubyCursorIdentifier()<CR>"<CR>
-    nnoremap <silent> <buffer> <C-W>]      :<C-U>exe v:count1."stag <C-R>=RubyCursorIdentifier()<CR>"<CR>
-    nnoremap <silent> <buffer> <C-W><C-]>  :<C-U>exe v:count1."stag <C-R>=RubyCursorIdentifier()<CR>"<CR>
-    nnoremap <silent> <buffer> <C-W>g<C-]> :<C-U>exe        "stjump <C-R>=RubyCursorIdentifier()<CR>"<CR>
-    nnoremap <silent> <buffer> <C-W>g]     :<C-U>exe      "stselect <C-R>=RubyCursorIdentifier()<CR>"<CR>
-    nnoremap <silent> <buffer> <C-W>}      :<C-U>exe          "ptag <C-R>=RubyCursorIdentifier()<CR>"<CR>
-    nnoremap <silent> <buffer> <C-W>g}     :<C-U>exe        "ptjump <C-R>=RubyCursorIdentifier()<CR>"<CR>
+    cnoremap <buffer> <SID>foldopen <Bar>if &foldopen =~# 'tag'<Bar>exe 'norm! zv'<Bar>endif
+    nnoremap <silent> <script> <buffer> <C-]>       :<C-U>exe  v:count1."tag <C-R>=RubyCursorIdentifier()<CR>"<SID>foldopen<CR>
+    nnoremap <silent> <script> <buffer> g<C-]>      :<C-U>exe         "tjump <C-R>=RubyCursorIdentifier()<CR>"<SID>foldopen<CR>
+    nnoremap <silent> <script> <buffer> g]          :<C-U>exe       "tselect <C-R>=RubyCursorIdentifier()<CR>"<SID>foldopen<CR>
+    nnoremap <silent> <script> <buffer> <C-W>]      :<C-U>exe v:count1."stag <C-R>=RubyCursorIdentifier()<CR>"<SID>foldopen<CR>
+    nnoremap <silent> <script> <buffer> <C-W><C-]>  :<C-U>exe v:count1."stag <C-R>=RubyCursorIdentifier()<CR>"<SID>foldopen<CR>
+    nnoremap <silent> <script> <buffer> <C-W>g<C-]> :<C-U>exe        "stjump <C-R>=RubyCursorIdentifier()<CR>"<SID>foldopen<CR>
+    nnoremap <silent> <script> <buffer> <C-W>g]     :<C-U>exe      "stselect <C-R>=RubyCursorIdentifier()<CR>"<SID>foldopen<CR>
+    nnoremap <silent> <script> <buffer> <C-W>}      :<C-U>exe          "ptag <C-R>=RubyCursorIdentifier()<CR>"<CR>
+    nnoremap <silent> <script> <buffer> <C-W>g}     :<C-U>exe        "ptjump <C-R>=RubyCursorIdentifier()<CR>"<CR>
     let b:undo_ftplugin = b:undo_ftplugin
           \."| sil! exe 'nunmap <buffer> <C-]>'| sil! exe 'nunmap <buffer> g<C-]>'| sil! exe 'nunmap <buffer> g]'"
           \."| sil! exe 'nunmap <buffer> <C-W>]'| sil! exe 'nunmap <buffer> <C-W><C-]>'"
@@ -233,29 +277,29 @@ function! RubyBalloonexpr()
 endfunction
 
 function! s:searchsyn(pattern,syn,flags,mode)
-    norm! m'
-    if a:mode ==# 'v'
-      norm! gv
-    endif
-    let i = 0
-    let cnt = v:count ? v:count : 1
-    while i < cnt
-        let i = i + 1
-        let line = line('.')
-        let col  = col('.')
-        let pos = search(a:pattern,'W'.a:flags)
-        while pos != 0 && s:synname() !~# a:syn
-            let pos = search(a:pattern,'W'.a:flags)
-        endwhile
-        if pos == 0
-            call cursor(line,col)
-            return
-        endif
+  let cnt = v:count1
+  norm! m'
+  if a:mode ==# 'v'
+    norm! gv
+  endif
+  let i = 0
+  while i < cnt
+    let i = i + 1
+    let line = line('.')
+    let col  = col('.')
+    let pos = search(a:pattern,'W'.a:flags)
+    while pos != 0 && s:synname() !~# a:syn
+      let pos = search(a:pattern,'W'.a:flags)
     endwhile
+    if pos == 0
+      call cursor(line,col)
+      return
+    endif
+  endwhile
 endfunction
 
 function! s:synname()
-    return synIDattr(synID(line('.'),col('.'),0),'name')
+  return synIDattr(synID(line('.'),col('.'),0),'name')
 endfunction
 
 function! s:wrap_i(back,forward)
@@ -312,7 +356,6 @@ function! s:gf(count,map,edit) abort
   else
     let target = expand('<cfile>')
   endif
-  let g:target = target
   let found = findfile(target, &path, a:count)
   if found ==# ''
     return 'norm! '.a:count.a:map

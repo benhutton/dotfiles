@@ -1,14 +1,31 @@
+set nocompatible
 filetype off 
-call pathogen#helptags()
-call pathogen#runtime_append_all_bundles()
+
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+Plugin 'scrooloose/nerdtree'
+Plugin 'scrooloose/nerdcommenter'
+Plugin 'tpope/vim-endwise'
+Plugin 'tpope/vim-ragtag'
+Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-rails'
+Plugin 'tpope/vim-repeat'
+Plugin 'tpope/vim-surround'
+Plugin 'vim-ruby/vim-ruby'
+Plugin 'tpope/vim-markdown'
+Plugin 'taxilian/herald.vim'
+Plugin 'minibufexpl.vim'
+
+call vundle#end()
+filetype plugin indent on
 
 autocmd!
 
+syntax on
 colorscheme herald
 set guifont=Ubuntu\ Mono\ derivative\ Powerline\ 11
 
-syntax on
-filetype plugin indent on
 
 set shiftwidth=2
 set shiftround
