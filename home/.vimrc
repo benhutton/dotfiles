@@ -3,6 +3,7 @@ filetype off
 
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
+Plugin 'gmarik/Vundle.vim'
 
 Plugin 'scrooloose/nerdtree'
 Plugin 'scrooloose/nerdcommenter'
@@ -14,7 +15,6 @@ Plugin 'tpope/vim-rake'
 Plugin 'tpope/vim-repeat'
 Plugin 'tpope/vim-bundler'
 Plugin 'vim-ruby/vim-ruby'
-Plugin 'tpope/vim-markdown'
 Plugin 'taxilian/herald.vim'
 Plugin 'minibufexpl.vim'
 
@@ -46,6 +46,7 @@ set guioptions-=m
 set guioptions-=r
 
 autocmd BufRead,BufNewFile *.mobile.erb set filetype=html
+autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 
 " enable eclipse style moving of lines
 nmap <M-j> mz:m+<CR>`z==
