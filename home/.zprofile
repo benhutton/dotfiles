@@ -8,3 +8,4 @@ source "$HOME/.zprezto/runcoms/zprofile"
 export EDITOR='vim'
 export VISUAL='vim'
 export PAGER='less'
+export FED='false'
