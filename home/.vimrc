@@ -26,10 +26,13 @@ Plugin 'scrooloose/nerdcommenter'
 Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-endwise'
 Plugin 'tpope/vim-ragtag'
+Plugin 'tpope/vim-surround'
 
 " Clojure
 Plugin 'tpope/vim-fireplace'
 Plugin 'tpope/vim-salve'
+Plugin 'guns/vim-sexp'
+Plugin 'tpope/vim-sexp-mappings-for-regular-people'
 
 call vundle#end()
 filetype plugin indent on
