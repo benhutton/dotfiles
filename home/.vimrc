@@ -19,6 +19,13 @@ Plugin 'vim-ruby/vim-ruby'
 Plugin 'taxilian/herald.vim'
 Plugin 'minibufexpl.vim'
 
+" Utilities
+Plugin 'tpope/vim-dispatch'
+
+" Clojure
+Plugin 'tpope/vim-fireplace'
+Plugin 'tpope/vim-salve'
+
 call vundle#end()
 filetype plugin indent on
 
