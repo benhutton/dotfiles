@@ -7,3 +7,7 @@
 	branch = auto
 [core]
 	excludesfile = /home/ben/.gitignore_global
+[web]
+  browser = chrome
+[browser "chrome"]
+  path = /opt/google/chrome/chrome
