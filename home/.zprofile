@@ -6,6 +6,11 @@ source "$HOME/.zprezto/runcoms/zprofile"
 #
 
 export EDITOR='vim'
-export VISUAL='vim'
+export VISUAL='gvim'
 export PAGER='less'
+
+#
+# Other environment variables
+#
+
 export FED='false'
