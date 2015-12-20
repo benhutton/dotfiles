@@ -143,3 +143,7 @@ let g:miniBufExplModSelTarget = 1
 
 " gist
 let g:gist_open_browser_after_post = 1
+
+" disable bells
+set noerrorbells visualbell t_vb=
+autocmd GUIEnter * set visualbell t_vb=
