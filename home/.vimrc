@@ -63,6 +63,7 @@ set guioptions-=r
 
 autocmd BufRead,BufNewFile *.mobile.erb set filetype=html
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+autocmd BufRead,BufNewFile *.es6 setfiletype javascript
 
 " enable eclipse style moving of lines
 nmap <M-j> mz:m+<CR>`z==
