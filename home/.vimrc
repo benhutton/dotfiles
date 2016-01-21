@@ -136,6 +136,10 @@ nnoremap <silent> .C :call NERDComment(0, "uncomment")<CR>
 vnoremap <silent> .C :call NERDComment(1, "uncomment")<CR>
 let NERDSpaceDelims=1
 
+" Run NERDTree by default and start with cursor in main window
+autocmd VimEnter * NERDTree
+autocmd VimEnter * wincmd p
+
 " minibufexpl
 let g:miniBufExplMapWindowNavVim = 1 
 let g:miniBufExplMapWindowNavArrows = 1 
