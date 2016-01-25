@@ -37,6 +37,8 @@ Plugin 'tpope/vim-sexp-mappings-for-regular-people'
 call vundle#end()
 filetype plugin indent on
 
+let nonerdtree=$NONERDTREE
+
 autocmd!
 
 syntax on
@@ -137,8 +139,10 @@ vnoremap <silent> .C :call NERDComment(1, "uncomment")<CR>
 let NERDSpaceDelims=1
 
 " Run NERDTree by default and start with cursor in main window
-autocmd VimEnter * NERDTree
-autocmd VimEnter * wincmd p
+if !(nonerdtree)
+  autocmd VimEnter * NERDTree
+  autocmd VimEnter * wincmd p
+end
 
 " minibufexpl
 let g:miniBufExplMapWindowNavVim = 1 

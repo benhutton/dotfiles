@@ -7,7 +7,7 @@
 	branch = auto
 [core]
 	excludesfile = /home/ben/.gitignore_global
-	editor = vim
+  editor = NONERDTREE=1 vim
 [web]
   browser = chrome
 [browser "chrome"]
