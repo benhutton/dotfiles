@@ -1,0 +1,7 @@
+windows:
+  - name: wakes
+    root: "~/projects/wakes"
+    layout: even-horizontal
+    panes:
+      - gvim && git status
+      - bin/guard
