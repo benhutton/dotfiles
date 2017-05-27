@@ -3,7 +3,7 @@ windows:
     root: "~/projects/gospel-io"
     layout: 24ae,382x105,0,0{191x105,0,0[191x31,0,0,0,191x35,0,32,3,191x37,0,68,2],190x105,192,0,1}
     panes:
-      - rvm use 2.1.7 && bundle exec rails s
-      - rvm use 2.1.7 && bundle exec rails c
-      - rvm use 2.1.7 && gvim && git status
-      - rvm use 2.1.7 && bundle exec guard
+      - bin/rails s
+      - bin/rails c
+      - gvim && git status
+      - bin/guard
