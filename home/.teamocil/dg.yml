@@ -6,4 +6,4 @@ windows:
       - bin/rails s
       - bin/rails c
       - gvim && git status
-      - bin/guard
+      - git status
