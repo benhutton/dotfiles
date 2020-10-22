@@ -8,6 +8,7 @@
 [core]
 	excludesfile = /home/ben/.gitignore_global
   editor = NONERDTREE=1 vim
+	attributesfile = /home/ben/.gitattributes
 [web]
   browser = chrome
 [browser "chrome"]
