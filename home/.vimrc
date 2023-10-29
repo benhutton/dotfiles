@@ -24,6 +24,7 @@ Plugin 'tpope/vim-repeat'
 Plugin 'scrooloose/nerdtree'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-rhubarb'
 Plugin 'tpope/vim-endwise'
 Plugin 'tpope/vim-ragtag'
 Plugin 'tpope/vim-surround'
@@ -33,6 +34,8 @@ Plugin 'tpope/vim-fireplace'
 Plugin 'tpope/vim-salve'
 Plugin 'guns/vim-sexp'
 Plugin 'tpope/vim-sexp-mappings-for-regular-people'
+
+Plugin 'github/copilot.vim'
 
 call vundle#end()
 filetype plugin indent on
@@ -132,10 +135,6 @@ inoremap <S-Tab> <C-D>
 " Plugin Configuration
 
 " NERDCommenter
-nnoremap <silent> .c :call NERDComment(0, "norm")<CR>
-vnoremap <silent> .c :call NERDComment(1, "norm")<CR>
-nnoremap <silent> .C :call NERDComment(0, "uncomment")<CR>
-vnoremap <silent> .C :call NERDComment(1, "uncomment")<CR>
 let NERDSpaceDelims=1
 
 " Run NERDTree by default and start with cursor in main window
