@@ -1,6 +1,6 @@
 windows:
-  - name: dg
-    root: "~/projects/dg"
+  - name: www
+    root: "~/projects/www-rails"
     layout: 24ae,382x105,0,0{191x105,0,0[191x31,0,0,0,191x35,0,32,3,191x37,0,68,2],190x105,192,0,1}
     panes:
       - bin/rails s
