@@ -5,5 +5,5 @@ windows:
     panes:
       - bin/server
       - bin/console
-      - gvim && git status
+      - git status
       - git status

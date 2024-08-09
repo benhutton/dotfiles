@@ -5,5 +5,5 @@ windows:
     panes:
       - bin/rails s
       - bin/rails c
-      - gvim && git status
+      - git status
       - git status
